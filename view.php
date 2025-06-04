@@ -51,14 +51,13 @@ $maxgrade = $selfgrade->grade;
 echo $OUTPUT->header();
 
 if (has_capability('mod/selfgrade:viewall', $context)) {
-
-//    $usergroupsdata = groups_get_user_groups($course->id, $USER->id);
-//    $usergroups = isset($usergroupsdata[1]) ? $usergroupsdata[1] : [];
-
     $groups = groups_get_all_groups($course->id);
 
+// $usergroupsdata = groups_get_user_groups($course->id, $USER->id);
+// $usergroups = isset($usergroupsdata[1]) ? $usergroupsdata[1] : [];
+
     if (!empty($groups)) {
-	echo html_writer::start_tag('form', ['method' => 'get', 'action' => 'viewsubmissions.php', 'class' => 'mb-3']);
+        echo html_writer::start_tag('form', ['method' => 'get', 'action' => 'viewsubmissions.php', 'class' => 'mb-3']);
 
         // Скрытое поле с id модуля
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $cm->id]);
@@ -78,7 +77,7 @@ if (has_capability('mod/selfgrade:viewall', $context)) {
 
         echo html_writer::end_tag('form');
 
-// JS для автоматического редиректа при выборе группы
+	// JS для автоматического редиректа при выборе группы
         echo html_writer::script("
             document.getElementById('groupid').addEventListener('change', function() {
                 var group = this.value;
