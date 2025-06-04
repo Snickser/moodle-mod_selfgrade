@@ -1,10 +1,28 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 function selfgrade_supports($feature) {
     switch ($feature) {
-        case FEATURE_GRADE_HAS_GRADE: return true;
-        case FEATURE_MOD_ARCHETYPE: return MOD_ARCHETYPE_OTHER;
-        default: return null;
+        case FEATURE_COMPLETION_HAS_RULES:
+        case FEATURE_MOD_INTRO:
+        case FEATURE_GRADE_HAS_GRADE:
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        default:
+            return null;
     }
 }
 
@@ -12,6 +30,11 @@ function selfgrade_add_instance($data) {
     global $DB;
 
     $data->timecreated = time();
+    $data->intro = $data->intro;
+    $data->introformat = $data->introformat ?? FORMAT_MOODLE;
+    $data->content = $data->content_editor['text'];
+    $data->contentformat = $data->content_editor['format'];
+    unset($data->content_editor); // Не сохраняем редактор напрямую
     return $DB->insert_record('selfgrade', $data);
 }
 
@@ -20,6 +43,12 @@ function selfgrade_update_instance($data) {
 
     $data->timemodified = time();
     $data->id = $data->instance;
+    $data->intro = $data->intro;
+    $data->introformat = $data->introformat ?? FORMAT_MOODLE;
+    $data->content = $data->content_editor['text'];
+    $data->contentformat = $data->content_editor['format'];
+    unset($data->content_editor); // Не сохраняем редактор напрямую
+
     return $DB->update_record('selfgrade', $data);
 }
 
@@ -30,3 +59,21 @@ function selfgrade_delete_instance($id) {
     return $DB->delete_records('selfgrade', ['id' => $id]);
 }
 
+function selfgrade_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    // Проверка: есть ли отправка у пользователя
+    $params = [
+        'selfgradeid' => $cm->instance,
+        'userid' => $userid,
+    ];
+
+    return $DB->record_exists('selfgrade_submissions', $params);
+}
+
+
+function selfgrade_get_completion_active_rule_descriptions($cm) {
+    return [
+        'completionSubmit' => get_string('completionSubmit', 'selfgrade'),
+    ];
+}

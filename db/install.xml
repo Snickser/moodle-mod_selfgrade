@@ -5,7 +5,12 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="100"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+	<FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="0"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+	<FIELD NAME="content" TYPE="text" NOTNULL="false"/>
+	<FIELD NAME="contentformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false"/>
       </FIELDS>
@@ -20,7 +25,7 @@
         <FIELD NAME="selfgradeid" TYPE="int" LENGTH="10" NOTNULL="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
         <FIELD NAME="text" TYPE="text" NOTNULL="false"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
       </FIELDS>
       <KEYS>
