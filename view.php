@@ -51,10 +51,47 @@ $maxgrade = $selfgrade->grade;
 echo $OUTPUT->header();
 
 if (has_capability('mod/selfgrade:viewall', $context)) {
-    $url = new moodle_url('/mod/selfgrade/viewsubmissions.php', ['id' => $cm->id]);
-    echo html_writer::link($url, 'Посмотреть ответы студентов');
-    echo html_writer::empty_tag('p');
-}
+
+$groups = groups_get_all_groups($course->id);
+echo html_writer::start_tag('form', ['method' => 'get', 'action' => 'viewsubmissions.php', 'class' => 'mb-3']);
+
+        // Скрытое поле с id модуля
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $cm->id]);
+
+        // label и select
+        echo html_writer::label('Выберите группу для просмотра ответов:', 'groupid', false, ['class' => 'form-label']);
+        echo html_writer::start_tag('select', ['name' => 'group', 'id' => 'groupid', 'class' => 'form-select', 'style' => 'max-width:300px;']);
+
+        echo html_writer::tag('option', '', ['value' => '', 'disabled' => '']);
+        echo html_writer::tag('option', 'Все группы', ['value' => 0]);
+
+        foreach ($groups as $group) {
+            echo html_writer::tag('option', format_string($group->name), ['value' => $group->id]);
+        }
+
+        echo html_writer::end_tag('select');
+
+        echo html_writer::end_tag('form');
+
+// JS для автоматического редиректа при выборе группы
+        echo html_writer::script("
+            document.getElementById('groupid').addEventListener('change', function() {
+                var group = this.value;
+                var url = new URL(window.location.origin + '/mod/selfgrade/viewsubmissions.php');
+                url.searchParams.set('id', '{$cm->id}');
+                if (group) {
+                    url.searchParams.set('group', group);
+                }
+                window.location.href = url.toString();
+            });
+        ");
+    } else {
+        // Если групп нет — просто ссылка
+        $url = new moodle_url('/mod/selfgrade/viewsubmissions.php', ['id' => $cm->id]);
+        echo html_writer::link($url, 'Посмотреть ответы студентов');
+        echo html_writer::empty_tag('p');
+    }
+
 
 echo $OUTPUT->box(format_text($selfgrade->content, $selfgrade->contentformat, ['context' => $context]), 'generalbox');
 
