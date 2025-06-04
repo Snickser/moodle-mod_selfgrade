@@ -135,6 +135,7 @@ echo html_writer::empty_tag('input', [
 echo html_writer::end_tag('div');
 
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
+echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
 // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
 echo html_writer::empty_tag('input', [

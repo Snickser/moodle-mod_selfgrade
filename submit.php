@@ -18,6 +18,7 @@ require('../../config.php');
 require_once($CFG->libdir . '/gradelib.php');
 
 require_login();
+require_sesskey();
 
 $id = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('selfgrade', $id, 0, false, MUST_EXIST);
