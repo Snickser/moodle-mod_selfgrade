@@ -24,27 +24,37 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 require_login($course, false, $cm);
 require_capability('mod/selfgrade:viewall', $context);
 
-$PAGE->set_url('/mod/selfgrade/viewsubmissions.php', ['id' => $id]);
+$groupid = optional_param('group', 0, PARAM_INT); // выбранная группа, 0 — все
+
+$PAGE->set_url('/mod/selfgrade/viewsubmissions.php', ['id' => $id, 'group' => $groupid]);
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('viewsubmissions', 'selfgrade'));
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
-$selfgrade = $DB->get_record('selfgrade', ['id' => $cm->instance], '*', MUST_EXIST);
+// Выведем меню выбора групп
+groups_print_activity_menu($cm, $PAGE->url);
 
+// Формируем SQL с фильтром по группе, если выбран
 $sql = "SELECT s.*, u.firstname, u.lastname, g.name AS groupname
         FROM {selfgrade_submissions} s
         JOIN {user} u ON s.userid = u.id
         LEFT JOIN {groups_members} gm ON gm.userid = u.id
         LEFT JOIN {groups} g ON g.id = gm.groupid AND g.courseid = :courseid
-        WHERE s.selfgradeid = :sid
-        ORDER BY s.timemodified DESC";
+        WHERE s.selfgradeid = :sid";
 
 $params = [
-    'sid' => $selfgrade->id,
-    'courseid' => $course->id
+    'sid' => $cm->instance,
+    'courseid' => $course->id,
 ];
+
+if ($groupid) {
+    $sql .= " AND g.id = :groupid";
+    $params['groupid'] = $groupid;
+}
+
+$sql .= " ORDER BY s.timemodified DESC";
 
 $submissions = $DB->get_records_sql($sql, $params);
 
@@ -61,7 +71,6 @@ if ($submissions) {
     $table->data = [];
 
     foreach ($submissions as $s) {
-        // Обеспечиваем наличие всех нужных полей для fullname()
         $s->firstnamephonetic = $s->firstnamephonetic ?? '';
         $s->lastnamephonetic = $s->lastnamephonetic ?? '';
         $s->middlename = $s->middlename ?? '';
@@ -71,11 +80,10 @@ if ($submissions) {
             fullname($s),
             $s->groupname ?? '-',
             format_float($s->grade, 2),
-//            format_text($s->text, FORMAT_HTML),
             html_writer::tag('div', format_text($s->text), [
-    'style' => 'max-height:150px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;'
-]),
-            userdate($s->timemodified),
+                'style' => 'max-height:100px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
+            ]),
+            html_writer::tag('div', userdate($s->timemodified, '%d.%m.%Y %H:%M'), ['style' => 'white-space: nowrap;']),
         ];
     }
 

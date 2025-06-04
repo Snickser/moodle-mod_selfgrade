@@ -59,18 +59,48 @@ if (has_capability('mod/selfgrade:viewall', $context)) {
 echo $OUTPUT->box(format_text($selfgrade->content, $selfgrade->contentformat, ['context' => $context]), 'generalbox');
 
 echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
+
+// textarea с классом form-control
 echo html_writer::tag('textarea', s($oldtext), [
     'name' => 'studenttext',
     'id' => 'studenttext',
     'rows' => 10,
     'cols' => 80,
+    'class' => 'form-control',
 ]);
+
 echo html_writer::empty_tag('p');
-echo html_writer::label('Оценка (от 0 до ' . $maxgrade . '):&nbsp;', 'grade');
-echo html_writer::empty_tag('input', ['type' => 'number', 'name' => 'grade', 'min' => 0, 'max' => $maxgrade, 'step' => '1', 'value' => $oldgrade]);
+
+echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
+
+echo html_writer::tag('label', 'Оценка (от 0 до ' . $maxgrade . '):&nbsp;', [
+    'for' => 'grade',
+    'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
+]);
+
+echo html_writer::empty_tag('input', [
+    'type' => 'number',
+    'name' => 'grade',
+    'id' => 'grade',
+    'min' => 0,
+    'max' => $maxgrade,
+    'step' => '1',
+    'value' => $oldgrade,
+    'class' => 'form-control',
+    'style' => 'width: 100px;', // ограничим ширину поля, чтобы не растягивалось
+]);
+
+echo html_writer::end_tag('div');
+
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
-echo html_writer::empty_tag('br');
-echo html_writer::empty_tag('input', ['type' => 'submit', 'value' => 'Отправить']);
+
+// кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
+echo html_writer::empty_tag('input', [
+    'type' => 'submit',
+    'value' => 'Отправить',
+    'class' => 'btn btn-primary mt-2',
+]);
+
 echo html_writer::end_tag('form');
 
 echo $OUTPUT->footer();
