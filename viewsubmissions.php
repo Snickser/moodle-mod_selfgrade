@@ -71,7 +71,10 @@ if ($submissions) {
             fullname($s),
             $s->groupname ?? '-',
             format_float($s->grade, 2),
-            format_text($s->text, FORMAT_HTML),
+//            format_text($s->text, FORMAT_HTML),
+            html_writer::tag('div', format_text($s->text), [
+    'style' => 'max-height:150px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;'
+]),
             userdate($s->timemodified),
         ];
     }
