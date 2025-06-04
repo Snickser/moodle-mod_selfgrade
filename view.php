@@ -22,25 +22,33 @@ $cm = get_coursemodule_from_id('selfgrade', $id, 0, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
 require_login($cm->course, false, $cm);
 
-$PAGE->set_url('/mod/selfgrade/view.php', ['id' => $id]);
-$PAGE->set_context($context);
-$PAGE->set_title("Self Grading");
-$PAGE->set_heading("Self Grading");
-$PAGE->add_body_class('limitedwidth');
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 $selfgrade = $DB->get_record('selfgrade', ['id' => $cm->instance], '*', MUST_EXIST);
-$maxgrade = $selfgrade->grade;
+
+$PAGE->set_url('/mod/selfgrade/view.php', ['id' => $id]);
+
+$PAGE->set_context($context);
+$PAGE->set_title($course->shortname . ': ' . $selfgrade->name);
+$PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
+
+$activityheader = ['hidecompletion' => false];
+if (empty($selfgrade->printintro)) {
+    $activityheader['description'] = '';
+}
+$PAGE->activityheader->set_attrs($activityheader);
 
 $submission = $DB->get_record('selfgrade_submissions', [
     'selfgradeid' => $selfgrade->id,
     'userid' => $USER->id,
 ]);
-
 $oldtext = $submission ? $submission->text : '';
 $oldgrade = $submission ? $submission->grade : '';
 
-echo $OUTPUT->header();
+$maxgrade = $selfgrade->grade;
 
+echo $OUTPUT->header();
 
 if (has_capability('mod/selfgrade:viewall', $context)) {
     $url = new moodle_url('/mod/selfgrade/viewsubmissions.php', ['id' => $cm->id]);

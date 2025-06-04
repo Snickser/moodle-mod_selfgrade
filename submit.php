@@ -76,5 +76,6 @@ if ($existing) {
 redirect(
     new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
     "Ответ сохранён. Ваша оценка: $grade из $maxgrade.",
-    2
+    null,
+    \core\output\notification::NOTIFY_SUCCESS
 );

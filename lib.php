@@ -16,8 +16,11 @@
 
 function selfgrade_supports($feature) {
     switch ($feature) {
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
         case FEATURE_COMPLETION_HAS_RULES:
         case FEATURE_MOD_INTRO:
+        case FEATURE_SHOW_DESCRIPTION:
         case FEATURE_GRADE_HAS_GRADE:
         case FEATURE_BACKUP_MOODLE2:
             return true;

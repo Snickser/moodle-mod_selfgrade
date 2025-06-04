@@ -27,6 +27,7 @@ class mod_selfgrade_mod_form extends moodleform_mod {
         'context' => $this->context,
         ];
     }
+
     public function set_data($defaultvalues) {
         if (!empty($defaultvalues->content)) {
             $draftid = file_get_submitted_draft_itemid('content_editor');
@@ -60,6 +61,8 @@ class mod_selfgrade_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
 
         $this->standard_intro_elements();
+
+        $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'page'));
 
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'page'));
 

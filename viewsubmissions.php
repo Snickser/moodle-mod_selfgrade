@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 require('../../config.php');
 
 $id = required_param('id', PARAM_INT); // Course module ID
@@ -18,20 +33,29 @@ echo $OUTPUT->header();
 
 $selfgrade = $DB->get_record('selfgrade', ['id' => $cm->instance], '*', MUST_EXIST);
 
-$sql = "SELECT s.*, u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
+$sql = "SELECT s.*, u.firstname, u.lastname, g.name AS groupname
         FROM {selfgrade_submissions} s
         JOIN {user} u ON s.userid = u.id
+        LEFT JOIN {groups_members} gm ON gm.userid = u.id
+        LEFT JOIN {groups} g ON g.id = gm.groupid AND g.courseid = :courseid
         WHERE s.selfgradeid = :sid
         ORDER BY s.timemodified DESC";
-$submissions = $DB->get_records_sql($sql, ['sid' => $selfgrade->id]);
+
+$params = [
+    'sid' => $selfgrade->id,
+    'courseid' => $course->id
+];
+
+$submissions = $DB->get_records_sql($sql, $params);
 
 if ($submissions) {
     $table = new html_table();
     $table->head = [
         get_string('fullname'),
+        get_string('group'),
         get_string('grade', 'grades'),
         get_string('text', 'selfgrade'),
-        get_string('date')
+        get_string('date'),
     ];
     $table->attributes = ['class' => 'generaltable mod_selfgrade_submissions'];
     $table->data = [];
@@ -45,14 +69,14 @@ if ($submissions) {
 
         $table->data[] = [
             fullname($s),
+            $s->groupname ?? '-',
             format_float($s->grade, 2),
             format_text($s->text, FORMAT_HTML),
-            userdate($s->timemodified)
+            userdate($s->timemodified),
         ];
     }
 
     echo html_writer::table($table);
-
 } else {
     echo $OUTPUT->notification(get_string('nosubmissions', 'selfgrade'), 'info');
 }
