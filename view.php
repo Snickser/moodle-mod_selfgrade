@@ -52,17 +52,22 @@ echo $OUTPUT->header();
 
 if (has_capability('mod/selfgrade:viewall', $context)) {
 
-$groups = groups_get_all_groups($course->id);
-echo html_writer::start_tag('form', ['method' => 'get', 'action' => 'viewsubmissions.php', 'class' => 'mb-3']);
+//    $usergroupsdata = groups_get_user_groups($course->id, $USER->id);
+//    $usergroups = isset($usergroupsdata[1]) ? $usergroupsdata[1] : [];
+
+    $groups = groups_get_all_groups($course->id);
+
+    if (!empty($groups)) {
+	echo html_writer::start_tag('form', ['method' => 'get', 'action' => 'viewsubmissions.php', 'class' => 'mb-3']);
 
         // Скрытое поле с id модуля
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $cm->id]);
 
         // label и select
-        echo html_writer::label('Выберите группу для просмотра ответов:', 'groupid', false, ['class' => 'form-label']);
+        echo html_writer::label('Выберите группу для просмотра ответов:&nbsp;', 'groupid', false, ['class' => 'form-label']);
         echo html_writer::start_tag('select', ['name' => 'group', 'id' => 'groupid', 'class' => 'form-select', 'style' => 'max-width:300px;']);
 
-        echo html_writer::tag('option', '', ['value' => '', 'disabled' => '']);
+        echo html_writer::tag('option', '', ['value' => '']);
         echo html_writer::tag('option', 'Все группы', ['value' => 0]);
 
         foreach ($groups as $group) {
@@ -91,7 +96,7 @@ echo html_writer::start_tag('form', ['method' => 'get', 'action' => 'viewsubmiss
         echo html_writer::link($url, 'Посмотреть ответы студентов');
         echo html_writer::empty_tag('p');
     }
-
+}
 
 echo $OUTPUT->box(format_text($selfgrade->content, $selfgrade->contentformat, ['context' => $context]), 'generalbox');
 
