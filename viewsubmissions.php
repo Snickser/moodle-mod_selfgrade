@@ -53,7 +53,7 @@ if ($submissions) {
     $table->head = [
         get_string('fullname'),
         get_string('group'),
-        get_string('grade', 'grades'),
+        get_string('gradeverb'),
         get_string('text', 'selfgrade'),
         get_string('date'),
     ];
