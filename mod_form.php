@@ -44,6 +44,20 @@ class mod_selfgrade_mod_form extends moodleform_mod {
                 'format' => $defaultvalues->contentformat,
                 'itemid' => $draftid,
             ];
+            $draftid = file_get_submitted_draft_itemid('answer_editor');
+            $defaultvalues->answer_editor = [
+            'text'   => file_prepare_draft_area(
+                $draftid,
+                $this->context->id,
+                'mod_selfgrade',
+                'content',
+                0,
+                $this->standard_editor_options(),
+                $defaultvalues->answer
+            ),
+                'format' => $defaultvalues->contentformat,
+                'itemid' => $draftid,
+            ];
         }
 
         parent::set_data($defaultvalues);
@@ -68,6 +82,9 @@ class mod_selfgrade_mod_form extends moodleform_mod {
 
         $mform->addElement('editor', 'content_editor', get_string('content', 'page'), null, page_get_editor_options($this->context));
         $mform->addRule('content_editor', get_string('required'), 'required', null, 'client');
+
+        $mform->addElement('editor', 'answer_editor', get_string('answer', 'selfgrade'), null, page_get_editor_options($this->context));
+        $mform->addRule('answer_editor', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'), ['size' => '5']);
         $mform->setType('gradepass', PARAM_FLOAT);

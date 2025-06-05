@@ -27,56 +27,74 @@ $context = context_module::instance($cm->id);
 $selfgrade = $DB->get_record('selfgrade', ['id' => $cm->instance], '*', MUST_EXIST);
 $maxgrade = $selfgrade->grade;
 
-$studenttext = required_param('studenttext', PARAM_RAW);
-$grade = required_param('grade', PARAM_FLOAT);
+$existing = $DB->get_record('selfgrade_submissions', [
+    'selfgradeid' => $selfgrade->id,
+    'userid' => $USER->id,
+]);
 
-if ($grade <= 0 || $grade > $maxgrade) {
+$studenttext = optional_param('studenttext', '', PARAM_RAW);
+$grade = optional_param('grade', 0, PARAM_FLOAT);
+
+$record = new stdClass();
+$record->selfgradeid = $selfgrade->id;
+$record->userid = $USER->id;
+$record->timemodified = time();
+
+if (empty($existing->text)) {
+    if ($studenttext === '') {
+        redirect(
+            new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
+            "Вы должны ввести текст.",
+            0,
+            1
+        );
+    } else {
+        $record->text = $studenttext;
+	$record->grade = 0;
+    }
+}
+
+if (!empty($existing->text)) {
+if (($grade <= 0 || $grade > $maxgrade)) {
     redirect(
         new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
         "Неверная оценка. Должна быть больше 0 и не больше $maxgrade.",
         0,
         1
     );
+} else {
+    $record->grade = $grade;
+    $record->text = $existing->text;
 }
-
-if ($studenttext === '') {
-    redirect(
-        new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
-        "Вы должны ввести текст.",
-        0,
-        1
-    );
 }
-
-$record = new stdClass();
-$record->selfgradeid = $selfgrade->id;
-$record->userid = $USER->id;
-$record->text = $studenttext;
-$record->grade = $grade;
-$record->timemodified = time();
 
 // Сохраняем (обновляем, если уже есть)
-$existing = $DB->get_record('selfgrade_submissions', [
-    'selfgradeid' => $selfgrade->id,
-    'userid' => $USER->id,
-]);
 
 if ($existing) {
     $record->id = $existing->id;
     $DB->update_record('selfgrade_submissions', $record);
+
+// echo serialize($record); die;
 
     $gradeobj = new stdClass();
     $gradeobj->userid = $USER->id;
     $gradeobj->rawgrade = $grade;
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
     grade_update('mod/selfgrade', $course->id, 'mod', 'selfgrade', $selfgrade->id, 0, $gradeobj);
+
+    redirect(
+        new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
+        "Ваша оценка: $grade из $maxgrade.",
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
 } else {
     $DB->insert_record('selfgrade_submissions', $record);
-}
 
-redirect(
-    new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
-    "Ответ сохранён. Ваша оценка: $grade из $maxgrade.",
-    null,
-    \core\output\notification::NOTIFY_SUCCESS
-);
+    redirect(
+        new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
+        "Ответ сохранён.",
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
+}

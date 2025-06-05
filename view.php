@@ -43,6 +43,7 @@ $submission = $DB->get_record('selfgrade_submissions', [
     'selfgradeid' => $selfgrade->id,
     'userid' => $USER->id,
 ]);
+$answer = $selfgrade ? $selfgrade->answer : '';
 $oldtext = $submission ? $submission->text : '';
 $oldgrade = $submission ? $submission->grade : '';
 
@@ -77,7 +78,7 @@ if (has_capability('mod/selfgrade:viewall', $context)) {
 
         echo html_writer::end_tag('form');
 
-	// JS для автоматического редиректа при выборе группы
+    // JS для автоматического редиректа при выборе группы
         echo html_writer::script("
             document.getElementById('groupid').addEventListener('change', function() {
                 var group = this.value;
@@ -97,29 +98,61 @@ if (has_capability('mod/selfgrade:viewall', $context)) {
     }
 }
 
-echo $OUTPUT->box(format_text($selfgrade->content, $selfgrade->contentformat, ['context' => $context]), 'generalbox');
 
-echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
+if (empty($submission->text)) {
+    echo $OUTPUT->box(format_text($selfgrade->content, $selfgrade->contentformat, ['context' => $context]), 'generalbox');
+
+    echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
 
 // textarea с классом form-control
-echo html_writer::tag('textarea', s($oldtext), [
+    echo html_writer::tag('textarea', s($oldtext), [
     'name' => 'studenttext',
     'id' => 'studenttext',
     'rows' => 10,
     'cols' => 80,
     'class' => 'form-control',
-]);
+    ]);
 
-echo html_writer::empty_tag('p');
+    echo html_writer::empty_tag('p');
 
-echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
-echo html_writer::tag('label', 'Оценка (от 0 до ' . $maxgrade . '):&nbsp;', [
+// кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
+    echo html_writer::empty_tag('input', [
+    'type' => 'submit',
+    'value' => 'Отправить',
+    'class' => 'btn btn-primary mt-2',
+    ]);
+
+    echo html_writer::end_tag('form');
+} else if ($submission->grade == 0) {
+    echo format_text("Ваш ответ", FORMAT_HTML);
+
+    echo    html_writer::tag('div', format_text($oldtext), [
+        'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
+            ]);
+
+    echo "<br>";
+
+    echo format_text("Правильный ответ", FORMAT_HTML);
+
+    echo    html_writer::tag('div', format_text($answer), [
+        'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
+            ]);
+
+    echo html_writer::empty_tag('p');
+
+    echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
+
+    echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
+
+    echo html_writer::tag('label', 'Оцените свой ответ (от 0 до ' . $maxgrade . '):&nbsp;', [
     'for' => 'grade',
     'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
-]);
+    ]);
 
-echo html_writer::empty_tag('input', [
+    echo html_writer::empty_tag('input', [
     'type' => 'number',
     'name' => 'grade',
     'id' => 'grade',
@@ -129,20 +162,28 @@ echo html_writer::empty_tag('input', [
     'value' => $oldgrade,
     'class' => 'form-control',
     'style' => 'width: 100px;', // ограничим ширину поля, чтобы не растягивалось
-]);
+    ]);
 
-echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
 
-echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
-echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
 // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
-echo html_writer::empty_tag('input', [
+    echo html_writer::empty_tag('input', [
     'type' => 'submit',
     'value' => 'Отправить',
     'class' => 'btn btn-primary mt-2',
-]);
+    ]);
 
-echo html_writer::end_tag('form');
+    echo html_writer::end_tag('form');
+} else {
+    echo    html_writer::tag('div', format_text($oldtext), [
+        'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
+            ]);
+
+    echo "<br>Оценка: " . $submission->grade;
+}
+
 
 echo $OUTPUT->footer();

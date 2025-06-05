@@ -36,6 +36,7 @@ function selfgrade_add_instance($data) {
     $data->intro = $data->intro;
     $data->introformat = $data->introformat ?? FORMAT_MOODLE;
     $data->content = $data->content_editor['text'];
+    $data->answer = $data->answer_editor['text'];
     $data->contentformat = $data->content_editor['format'];
     unset($data->content_editor); // Не сохраняем редактор напрямую
     return $DB->insert_record('selfgrade', $data);
@@ -49,6 +50,7 @@ function selfgrade_update_instance($data) {
     $data->intro = $data->intro;
     $data->introformat = $data->introformat ?? FORMAT_MOODLE;
     $data->content = $data->content_editor['text'];
+    $data->answer = $data->answer_editor['text'];
     $data->contentformat = $data->content_editor['format'];
     unset($data->content_editor); // Не сохраняем редактор напрямую
 

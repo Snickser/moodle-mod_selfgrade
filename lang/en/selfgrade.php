@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+$string['answer'] = 'Right answer';
 $string['content'] = 'Page content';
 $string['modulename'] = 'Self Grade';
 $string['modulenameplural'] = 'Self Grades';
