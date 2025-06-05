@@ -51,7 +51,7 @@ $maxgrade = $selfgrade->grade;
 
 echo $OUTPUT->header();
 
-if (has_capability('mod/selfgrade:viewall', $context)) {
+if (has_capability('mod/selfgrade:viewall', $context) || is_siteadmin()) {
     $groups = groups_get_all_groups($course->id);
 
 // $usergroupsdata = groups_get_user_groups($course->id, $USER->id);
