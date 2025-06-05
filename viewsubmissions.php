@@ -95,7 +95,7 @@ if ($submissions) {
             html_writer::tag('div', format_text($s->text), [
                 'style' => 'max-height:100px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]),
-            html_writer::tag('div', userdate($s->timemodified, '%d.%m.%Y %H:%M'), ['style' => 'white-space: nowrap;']),
+            html_writer::tag('div', userdate($s->timemodified, '%Y.%m.%d %H:%M'), ['style' => 'white-space: nowrap;']),
         $button,
         ];
     }

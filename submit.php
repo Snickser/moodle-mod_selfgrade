@@ -93,7 +93,7 @@ if ($existing) {
     $record->id = $existing->id;
     $DB->update_record('selfgrade_submissions', $record);
 
-// echo serialize($record); die;
+    // echo serialize($record); die;
 
     $gradeobj = new stdClass();
     $gradeobj->userid = $USER->id;
