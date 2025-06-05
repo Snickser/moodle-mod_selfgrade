@@ -21,6 +21,11 @@ require_login();
 require_sesskey();
 
 $id = required_param('id', PARAM_INT);
+
+$studenttext = optional_param('studenttext', '', PARAM_RAW);
+$grade = optional_param('grade', 0, PARAM_FLOAT);
+$delete = optional_param('delete', 0, PARAM_INT);
+
 $cm = get_coursemodule_from_id('selfgrade', $id, 0, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
 
@@ -32,8 +37,12 @@ $existing = $DB->get_record('selfgrade_submissions', [
     'userid' => $USER->id,
 ]);
 
-$studenttext = optional_param('studenttext', '', PARAM_RAW);
-$grade = optional_param('grade', 0, PARAM_FLOAT);
+if ($delete && isset($existing->id)) {
+    require_capability('mod/selfgrade:viewall', $context);
+    $DB->delete_records('selfgrade_submissions', ['id' => $delete]);
+    redirect(new moodle_url('/mod/selfgrade/viewsubmissions.php', ['id' => $cm->id]));
+}
+
 
 $record = new stdClass();
 $record->selfgradeid = $selfgrade->id;

@@ -66,6 +66,7 @@ if ($submissions) {
         get_string('gradeverb'),
         get_string('text', 'selfgrade'),
         get_string('date'),
+        '&nbsp;',
     ];
     $table->attributes = ['class' => 'generaltable mod_selfgrade_submissions'];
     $table->data = [];
@@ -76,6 +77,8 @@ if ($submissions) {
         $s->middlename = $s->middlename ?? '';
         $s->alternatename = $s->alternatename ?? '';
 
+$url = new moodle_url('/mod/selfgrade/submit.php', ['id' => $id, 'sesskey' => sesskey(), 'delete' => $s->id]);
+
         $table->data[] = [
             fullname($s),
             $s->groupname ?? '-',
@@ -84,6 +87,7 @@ if ($submissions) {
                 'style' => 'max-height:100px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]),
             html_writer::tag('div', userdate($s->timemodified, '%d.%m.%Y %H:%M'), ['style' => 'white-space: nowrap;']),
+    $OUTPUT->single_button($url, get_string('delete'), 'post', ['type' => 'danger']),
         ];
     }
 
