@@ -25,6 +25,7 @@ $id = required_param('id', PARAM_INT);
 $studenttext = optional_param('studenttext', '', PARAM_RAW);
 $grade = optional_param('grade', 0, PARAM_FLOAT);
 $delete = optional_param('delete', 0, PARAM_INT);
+$random = optional_param('random', 0, PARAM_INT);
 
 $cm = get_coursemodule_from_id('selfgrade', $id, 0, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
@@ -32,10 +33,16 @@ $context = context_module::instance($cm->id);
 $selfgrade = $DB->get_record('selfgrade', ['id' => $cm->instance], '*', MUST_EXIST);
 $maxgrade = $selfgrade->grade;
 
-$existing = $DB->get_record('selfgrade_submissions', [
+if ($random) {
+    $existing = $DB->get_record('selfgrade_submissions', [
+    'id' => $random,
+    ]);
+} else {
+    $existing = $DB->get_record('selfgrade_submissions', [
     'selfgradeid' => $selfgrade->id,
     'userid' => $USER->id,
-]);
+    ]);
+}
 
 if ($delete && isset($existing->id)) {
     require_capability('mod/selfgrade:viewall', $context);
@@ -43,10 +50,14 @@ if ($delete && isset($existing->id)) {
     redirect(new moodle_url('/mod/selfgrade/viewsubmissions.php', ['id' => $cm->id]));
 }
 
-
 $record = new stdClass();
-$record->selfgradeid = $selfgrade->id;
-$record->userid = $USER->id;
+if ($random) {
+    $record = $existing;
+    $record->other = $USER->id;
+} else {
+    $record->selfgradeid = $selfgrade->id;
+    $record->userid = $USER->id;
+}
 $record->timemodified = time();
 
 if (empty($existing->text)) {
@@ -78,7 +89,6 @@ if (!empty($existing->text)) {
 }
 
 // Сохраняем (обновляем, если уже есть)
-
 if ($existing) {
     $record->id = $existing->id;
     $DB->update_record('selfgrade_submissions', $record);

@@ -29,6 +29,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
         <FIELD NAME="text" TYPE="text" NOTNULL="false"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="other" TYPE="number" LENGTH="10" NOTNULL="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
       </FIELDS>
       <KEYS>

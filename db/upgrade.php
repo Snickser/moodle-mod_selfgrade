@@ -104,5 +104,16 @@ function xmldb_selfgrade_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025060509, 'selfgrade');
     }
 
+    if ($oldversion < 2025060511) {
+        $table = new xmldb_table('selfgrade_submissions');
+        $field = new xmldb_field('other', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'grade');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2025060511, 'selfgrade');
+    }
+
     return true;
 }
