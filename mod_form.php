@@ -95,6 +95,9 @@ class mod_selfgrade_mod_form extends moodleform_mod {
         $mform->setType('grade', PARAM_FLOAT);
         $mform->setDefault('grade', 10);
 
+        $mform->addElement('advcheckbox', 'random', get_string('random', 'selfgrade'));
+        $mform->addHelpButton('random', 'random', 'selfgrade');
+
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
     }

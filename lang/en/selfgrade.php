@@ -27,3 +27,5 @@ $string['viewsubmissions'] = 'Student submissions';
 $string['nosubmissions'] = 'No submissions yet.';
 $string['text'] = 'Text';
 $string['grade'] = 'Grade';
+$string['random'] = 'Grade someone\'s random answer';
+$string['random_help'] = 'For grade, the student will not be given his own answer, but a random answer from another student.';
