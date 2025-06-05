@@ -214,7 +214,7 @@ if (empty($submission->text)) {
 
         echo format_text("Правильный ответ", FORMAT_HTML);
 
-        echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => false]), [
+        echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]);
 
