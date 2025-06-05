@@ -59,22 +59,22 @@ if (empty($existing->text)) {
         );
     } else {
         $record->text = $studenttext;
-	$record->grade = 0;
+        $record->grade = 0;
     }
 }
 
 if (!empty($existing->text)) {
-if (($grade <= 0 || $grade > $maxgrade)) {
-    redirect(
-        new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
-        "Неверная оценка. Должна быть больше 0 и не больше $maxgrade.",
-        0,
-        1
-    );
-} else {
-    $record->grade = $grade;
-    $record->text = $existing->text;
-}
+    if (($grade <= 0 || $grade > $maxgrade)) {
+        redirect(
+            new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
+            "Неверная оценка. Должна быть больше 0 и не больше $maxgrade.",
+            0,
+            1
+        );
+    } else {
+        $record->grade = $grade;
+        $record->text = $existing->text;
+    }
 }
 
 // Сохраняем (обновляем, если уже есть)

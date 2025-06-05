@@ -77,7 +77,16 @@ if ($submissions) {
         $s->middlename = $s->middlename ?? '';
         $s->alternatename = $s->alternatename ?? '';
 
-$url = new moodle_url('/mod/selfgrade/submit.php', ['id' => $id, 'sesskey' => sesskey(), 'delete' => $s->id]);
+        $url = new moodle_url('/mod/selfgrade/submit.php');
+
+            $button = '<form name="delete' . $s->id . '" method="POST" action="' . $url . '">
+                <input type="hidden" name="sesskey" value="' . sesskey() . '">
+                <input type="hidden" name="id" value="' . $id . '">
+                <input type="hidden" name="delete" value="' . $s->id . '">
+                <button type="submit" class="btn btn-danger" data-modal="confirmation"
+                    data-modal-title-str=\'["delete", "core"]\' data-modal-content-str=\'["areyousure"]\'
+                    data-modal-yes-button-str=\'["confirm", "core"]\'">' . get_string('delete') . '</button>
+            </form>';
 
         $table->data[] = [
             fullname($s),
@@ -87,7 +96,7 @@ $url = new moodle_url('/mod/selfgrade/submit.php', ['id' => $id, 'sesskey' => se
                 'style' => 'max-height:100px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]),
             html_writer::tag('div', userdate($s->timemodified, '%d.%m.%Y %H:%M'), ['style' => 'white-space: nowrap;']),
-    $OUTPUT->single_button($url, get_string('delete'), 'post', ['type' => 'danger']),
+        $button,
         ];
     }
 
