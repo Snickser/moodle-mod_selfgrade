@@ -147,7 +147,7 @@ if (empty($submission->text)) {
 
     echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
 
-    echo html_writer::tag('label', 'Оцените свой ответ (от 0 до ' . $maxgrade . '):&nbsp;', [
+    echo html_writer::tag('label', 'Оцените свой ответ (максимальный балл ' . $maxgrade . '):&nbsp;', [
     'for' => 'grade',
     'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
     ]);
