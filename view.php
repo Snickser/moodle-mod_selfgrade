@@ -131,67 +131,28 @@ if (empty($submission->text)) {
         data-modal-yes-button-str=\'["confirm", "core"]\'">' . get_string('submit') . '</button>';
 
     echo html_writer::end_tag('form');
-} else if ($submission->grade == 0) {
-    if ($selfgrade->random) {
-        // Получить список ID всех чужих неоценённых ответов.
-        $othersql = "SELECT id
-    	    FROM {selfgrade_submissions}
-    	    WHERE selfgradeid = :selfgradeid
-    		AND grade = 0
-        	AND userid <> :userid";
-        $otherparams = [
-            'selfgradeid' => $selfgrade->id,
-            'userid' => $USER->id,
-        ];
-        $ids = $DB->get_fieldset_sql($othersql, $otherparams);
+} else if ($selfgrade->random) {
+    // Получаем самый последний неоценённый ответ другого студента
+    $othersql = "SELECT s.*
+               FROM {selfgrade_submissions} s
+              WHERE s.selfgradeid = :selfgradeid
+                AND s.userid <> :userid
+                AND s.grade = 0
+           ORDER BY s.timemodified DESC";
+    $otherparams = ['selfgradeid' => $selfgrade->id, 'userid' => $USER->id];
+    $other = $DB->get_record_sql($othersql, $otherparams);
 
-        if (!empty($ids)) {
-            // Случайный выбор ID через PHP (кросс-СУБД)
-            $randomid = $ids[array_rand($ids)];
-
-            // Получаем полную запись
-            $other = $DB->get_record('selfgrade_submissions', ['id' => $randomid]);
-        }
-
-        if ($other) {
-            echo html_writer::tag('h5', 'Ответ другого студента', ['class' => 'mt-4']);
-            echo html_writer::tag('div', format_text($other->text), [
-            'style' => 'overflow:auto; padding:4px; border:1px dashed #999; background:#f0f0f0; font-size:0.9em;',
-            'class' => 'mb-3',
-            ]);
-        } else {
-            echo html_writer::tag('h5', "Пока нет ответов на проверку, зайдите позже.", ['class' => 'mt-4']);
-
-            echo format_text("Ваш ответ", FORMAT_HTML);
-
-            echo    html_writer::tag('div', format_text($oldtext, FORMAT_HTML), [
-            'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
-            ]);
-
-            echo "<br>";
-            echo format_text("Правильный ответ", FORMAT_HTML);
-
-            echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
-            'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
-            ]);
-
-            echo "<br>Оценка: " . $submission->grade;
-        }
-    } else {
-        echo format_text("Ваш ответ", FORMAT_HTML);
-        echo html_writer::tag('div', format_text($oldtext), [
-        'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
-            ]);
-    }
-
-    echo "<br>";
-
-    if ($other || !$selfgrade->random) {
+    if ($other) {
+        echo html_writer::tag('h5', 'Ответ другого студента', ['class' => 'mt-4']);
+        echo html_writer::tag('div', format_text($other->text), [
+        'style' => 'overflow:auto; padding:4px; border:1px dashed #999; background:#f0f0f0; font-size:0.9em;',
+        'class' => 'mb-3',
+        ]);
         echo format_text("Правильный ответ", FORMAT_HTML);
 
         echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
-            ]);
+        ]);
 
         echo html_writer::empty_tag('p');
 
@@ -200,11 +161,66 @@ if (empty($submission->text)) {
         echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
 
         echo html_writer::tag('label', 'Оцените ответ (максимальный балл ' . $maxgrade . '):&nbsp;', [
+        'for' => 'grade',
+        'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
+        ]);
+
+        echo html_writer::empty_tag('input', [
+        'type' => 'number',
+        'name' => 'grade',
+        'id' => 'grade',
+        'min' => 0,
+        'max' => $maxgrade,
+        'step' => '1',
+        'value' => $oldgrade,
+        'class' => 'form-control',
+        'style' => 'width: 100px;', // ограничим ширину поля, чтобы не растягивалось
+        ]);
+
+        echo html_writer::end_tag('div');
+
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'random', 'value' => $other->id]);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+
+    // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
+        echo html_writer::empty_tag('input', [
+        'type' => 'submit',
+        'value' => 'Отправить',
+        'class' => 'btn btn-primary mt-2',
+        ]);
+
+        echo html_writer::end_tag('form');
+    } else {
+        echo html_writer::tag('h5', "Пока нет ответов на проверку, зайдите позже.", ['class' => 'mt-4']);
+    }
+} else if ($submission->grade == 0) {
+    echo format_text("Ваш ответ", FORMAT_HTML);
+
+    echo html_writer::tag('div', format_text($oldtext, FORMAT_HTML), [
+            'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
+            ]);
+
+    echo "<br>";
+
+    echo format_text("Правильный ответ", FORMAT_HTML);
+
+    echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
+        'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
+            ]);
+
+    echo html_writer::empty_tag('p');
+
+    echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
+
+    echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
+
+    echo html_writer::tag('label', 'Оцените ответ (максимальный балл ' . $maxgrade . '):&nbsp;', [
            'for' => 'grade',
            'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
            ]);
 
-        echo html_writer::empty_tag('input', [
+    echo html_writer::empty_tag('input', [
            'type' => 'number',
            'name' => 'grade',
            'id' => 'grade',
@@ -216,25 +232,24 @@ if (empty($submission->text)) {
            'style' => 'width: 100px;', // ограничим ширину поля, чтобы не растягивалось
            ]);
 
-        echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
 
-        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
 
-        if ($other) {
-            echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'random', 'value' => $other->id]);
-        }
-        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+    if ($other) {
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'random', 'value' => $other->id]);
+    }
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
-        // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
-        echo html_writer::empty_tag('input', [
+    // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
+    echo html_writer::empty_tag('input', [
         'type' => 'submit',
         'value' => 'Отправить',
         'class' => 'btn btn-primary mt-2',
         ]);
 
 
-        echo html_writer::end_tag('form');
-    }
+    echo html_writer::end_tag('form');
 } else {
     echo format_text("Ваш ответ", FORMAT_HTML);
 

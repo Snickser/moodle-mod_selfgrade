@@ -44,7 +44,7 @@ if ($random) {
     ]);
 }
 
-if ($delete && isset($existing->id)) {
+if ($delete) {
     require_capability('mod/selfgrade:viewall', $context);
     $DB->delete_records('selfgrade_submissions', ['id' => $delete]);
     redirect(new moodle_url('/mod/selfgrade/viewsubmissions.php', ['id' => $cm->id]));
