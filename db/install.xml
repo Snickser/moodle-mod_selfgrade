@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/selfgrade/db" VERSION="2025060300" COMMENT="Selfgrade module DB">
+<XMLDB PATH="mod/selfgrade/db" VERSION="20250606" COMMENT="Selfgrade module DB"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="selfgrade" COMMENT="Main table for selfgrade activity">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
-	<FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="0"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="decimalpoints" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-	<FIELD NAME="printintro" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
-	<FIELD NAME="content" TYPE="text" NOTNULL="false"/>
-	<FIELD NAME="answer" TYPE="text" NOTNULL="false"/>
-	<FIELD NAME="random" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
-	<FIELD NAME="contentformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="printintro" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="answer" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="random" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="contentformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-
     <TABLE NAME="selfgrade_submissions" COMMENT="Submissions from students">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="selfgradeid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="text" TYPE="text" NOTNULL="false"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false"/>
-        <FIELD NAME="other" TYPE="number" LENGTH="10" NOTNULL="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="selfgradeid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="text" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="other" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

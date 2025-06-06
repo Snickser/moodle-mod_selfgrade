@@ -78,7 +78,7 @@ if (!empty($existing->text)) {
     if (($grade <= 0 || $grade > $maxgrade)) {
         redirect(
             new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
-            "Неверная оценка. Должна быть больше 0 и не больше $maxgrade.",
+            "Неверная оценка. Должна быть больше 0 и не больше " . format_float($maxgrade, $selfgrade->decimalpoints),
             0,
             1
         );
@@ -103,7 +103,7 @@ if ($existing) {
 
     redirect(
         new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
-        "Ваша оценка: $grade из $maxgrade.",
+        "Ваша оценка: " . format_float($grade, $selfgrade->decimalpoints) . ' из ' . format_float($maxgrade, $selfgrade->decimalpoints) . '.',
         null,
         \core\output\notification::NOTIFY_SUCCESS
     );
@@ -112,7 +112,7 @@ if ($existing) {
 
     redirect(
         new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
-        "Ответ сохранён.",
+        "Ваш ответ сохранён.",
         null,
         \core\output\notification::NOTIFY_SUCCESS
     );

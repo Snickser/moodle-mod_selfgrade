@@ -20,6 +20,7 @@ $id = required_param('id', PARAM_INT); // Course module ID
 $cm = get_coursemodule_from_id('selfgrade', $id, 0, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$selfgrade = $DB->get_record('selfgrade', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 require_capability('mod/selfgrade:viewall', $context);
@@ -91,7 +92,7 @@ if ($submissions) {
         $table->data[] = [
             fullname($s),
             $s->groupname ?? '-',
-            format_float($s->grade, 2),
+            format_float($s->grade, $selfgrade->decimalpoints),
             html_writer::tag('div', format_text($s->text), [
                 'style' => 'max-height:100px; overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]),

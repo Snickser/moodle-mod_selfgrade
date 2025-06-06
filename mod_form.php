@@ -44,6 +44,8 @@ class mod_selfgrade_mod_form extends moodleform_mod {
                 'format' => $defaultvalues->contentformat,
                 'itemid' => $draftid,
             ];
+        }
+        if (!empty($defaultvalues->answer)) {
             $draftid = file_get_submitted_draft_itemid('answer_editor');
             $defaultvalues->answer_editor = [
             'text'   => file_prepare_draft_area(
@@ -59,8 +61,14 @@ class mod_selfgrade_mod_form extends moodleform_mod {
                 'itemid' => $draftid,
             ];
         }
-
         parent::set_data($defaultvalues);
+    }
+
+    public function data_preprocessing(&$toform) {
+        if (isset($toform['grade'])) {
+            // Convert to a real number, so we don't get 0.0000.
+            $toform['grade'] = $toform['grade'] + 0;
+        }
     }
 
     public function definition() {
@@ -94,6 +102,19 @@ class mod_selfgrade_mod_form extends moodleform_mod {
         $mform->addElement('text', 'grade', get_string('grademax', 'grades'), ['size' => '5']);
         $mform->setType('grade', PARAM_FLOAT);
         $mform->setDefault('grade', 10);
+
+        // Overall decimal points.
+        $options = [];
+        for ($i = 0; $i <= 5; $i++) {
+            $options[$i] = $i;
+        }
+        $mform->addElement(
+            'select',
+            'decimalpoints',
+            get_string('decimalplaces', 'quiz'),
+            $options
+        );
+        $mform->addHelpButton('decimalpoints', 'decimalplaces', 'quiz');
 
         $mform->addElement('advcheckbox', 'random', get_string('random', 'selfgrade'));
         $mform->addHelpButton('random', 'random', 'selfgrade');

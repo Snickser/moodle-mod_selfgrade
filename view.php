@@ -118,14 +118,7 @@ if (empty($submission->text)) {
 
     echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $id]);
     echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
-/*
-    // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
-    echo html_writer::empty_tag('input', [
-    'type' => 'submit',
-    'value' => 'Отправить',
-    'class' => 'btn btn-primary mt-2',
-    ]);
-*/
+
     echo '<button type="submit" class="mt-2 btn btn-primary" data-modal="confirmation"
         data-modal-title-str=\'["submit", "core"]\' data-modal-content-str=\'["areyousure"]\'
         data-modal-yes-button-str=\'["confirm", "core"]\'">' . get_string('submit') . '</button>';
@@ -160,7 +153,7 @@ if (empty($submission->text)) {
 
         echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
 
-        echo html_writer::tag('label', 'Оцените ответ (максимальный балл ' . $maxgrade . '):&nbsp;', [
+        echo html_writer::tag('label', 'Оцените ответ (максимальный балл ' . format_float($maxgrade, $selfgrade->decimalpoints) . '):&nbsp;', [
         'for' => 'grade',
         'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
         ]);
@@ -170,9 +163,9 @@ if (empty($submission->text)) {
         'name' => 'grade',
         'id' => 'grade',
         'min' => 0,
-        'max' => $maxgrade,
-        'step' => '1',
-        'value' => $oldgrade,
+        'max' => format_float($maxgrade, $selfgrade->decimalpoints),
+        'step' => $selfgrade->decimalpoints ? 1 / ($selfgrade->decimalpoints * 10) : 1,
+        'value' => format_float($oldgrade, $selfgrade->decimalpoints),
         'class' => 'form-control',
         'style' => 'width: 100px;', // ограничим ширину поля, чтобы не растягивалось
         ]);
@@ -183,7 +176,7 @@ if (empty($submission->text)) {
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'random', 'value' => $other->id]);
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
-    // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
+        // кнопка submit с классом btn btn-primary (стандарт Bootstrap в Moodle)
         echo html_writer::empty_tag('input', [
         'type' => 'submit',
         'value' => 'Отправить',
@@ -265,7 +258,7 @@ if (empty($submission->text)) {
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]);
 
-    echo "<br>Оценка: " . $submission->grade;
+// echo "<br>Оценка: " . format_float($submission->grade, $selfgrade->decimalpoints);
 }
 
 
