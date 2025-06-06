@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 require('../../config.php');
-require_once($CFG->libdir . '/gradelib.php');
+require_once('lib.php');
 
 require_login();
 require_sesskey();
@@ -88,18 +88,21 @@ if (!empty($existing->text)) {
     }
 }
 
+
+$gradeobj = new stdClass();
+if($random){
+    $gradeobj->userid = $record->userid;
+} else {
+    $gradeobj->userid = $USER->id;
+}
+
 // Сохраняем (обновляем, если уже есть)
 if ($existing) {
     $record->id = $existing->id;
     $DB->update_record('selfgrade_submissions', $record);
 
-    // echo serialize($record); die;
-
-    $gradeobj = new stdClass();
-    $gradeobj->userid = $USER->id;
     $gradeobj->rawgrade = $grade;
-    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-    grade_update('mod/selfgrade', $course->id, 'mod', 'selfgrade', $selfgrade->id, 0, $gradeobj);
+    selfgrade_grade_item_update($selfgrade, $gradeobj);
 
     redirect(
         new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
@@ -109,6 +112,9 @@ if ($existing) {
     );
 } else {
     $DB->insert_record('selfgrade_submissions', $record);
+
+    $gradeobj->rawgrade = 0;
+    selfgrade_grade_item_update($selfgrade, $gradeobj);
 
     redirect(
         new moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),

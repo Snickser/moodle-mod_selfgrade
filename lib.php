@@ -39,6 +39,7 @@ function selfgrade_add_instance($data) {
     $data->answer = $data->answer_editor['text'];
     $data->contentformat = $data->content_editor['format'];
     unset($data->content_editor); // Не сохраняем редактор напрямую
+    selfgrade_grade_item_update($data);
     return $DB->insert_record('selfgrade', $data);
 }
 
@@ -53,7 +54,7 @@ function selfgrade_update_instance($data) {
     $data->answer = $data->answer_editor['text'];
     $data->contentformat = $data->content_editor['format'];
     unset($data->content_editor); // Не сохраняем редактор напрямую
-
+    selfgrade_grade_item_update($data);
     return $DB->update_record('selfgrade', $data);
 }
 
@@ -81,4 +82,27 @@ function selfgrade_get_completion_active_rule_descriptions($cm) {
     return [
         'completionSubmit' => get_string('completionSubmit', 'selfgrade'),
     ];
+}
+
+function selfgrade_grade_item_update($selfgrade, $grades = null) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    $params = [
+        'itemname' => $selfgrade->name,
+        'gradetype' => GRADE_TYPE_VALUE,
+        'grademax' => (float)($selfgrade->grade ?? 100),
+        'grademin' => 0,
+    ];
+
+    return grade_update(
+        'mod/selfgrade',
+        $selfgrade->course,
+        'mod',
+        'selfgrade',
+        $selfgrade->id,
+        0,
+        $grades,
+        $params
+    );
 }

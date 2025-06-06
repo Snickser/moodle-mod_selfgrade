@@ -187,7 +187,7 @@ if (empty($submission->text)) {
     } else {
         echo html_writer::tag('h5', "Пока нет ответов на проверку, зайдите позже.", ['class' => 'mt-4']);
     }
-} else if ($submission->grade == 0) {
+} else if ($submission->grade >= 0) {
     echo format_text("Ваш ответ", FORMAT_HTML);
 
     echo html_writer::tag('div', format_text($oldtext, FORMAT_HTML), [

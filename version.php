@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_selfgrade';
-$plugin->version = 2025060612;
+$plugin->version = 2025060613;
 $plugin->requires = 2023042400;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '0.4';
