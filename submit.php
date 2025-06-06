@@ -90,7 +90,7 @@ if (!empty($existing->text)) {
 
 
 $gradeobj = new stdClass();
-if($random){
+if ($random) {
     $gradeobj->userid = $record->userid;
 } else {
     $gradeobj->userid = $USER->id;

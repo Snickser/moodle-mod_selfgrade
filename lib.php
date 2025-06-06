@@ -58,11 +58,27 @@ function selfgrade_update_instance($data) {
     return $DB->update_record('selfgrade', $data);
 }
 
+/**
+ * Удаляет экземпляр selfgrade.
+ *
+ * @param int $id ID записи selfgrade в таблице {selfgrade}
+ * @return bool успех
+ * @package mod_selfgrade
+ */
 function selfgrade_delete_instance($id) {
     global $DB;
 
-    $DB->delete_records('selfgrade_submissions', ['selfgradeid' => $id]);
-    return $DB->delete_records('selfgrade', ['id' => $id]);
+    if (!$selfgrade = $DB->get_record('selfgrade', ['id' => $id])) {
+        return false;
+    }
+
+    // Удаление всех отправленных ответов
+    $DB->delete_records('selfgrade_submissions', ['selfgradeid' => $selfgrade->id]);
+
+    // Удаление основной записи selfgrade
+    $DB->delete_records('selfgrade', ['id' => $selfgrade->id]);
+
+    return true;
 }
 
 function selfgrade_get_completion_state($course, $cm, $userid, $type) {
@@ -86,7 +102,7 @@ function selfgrade_get_completion_active_rule_descriptions($cm) {
 
 function selfgrade_grade_item_update($selfgrade, $grades = null) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     $params = [
         'itemname' => $selfgrade->name,
