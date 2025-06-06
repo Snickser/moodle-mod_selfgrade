@@ -218,9 +218,9 @@ if (empty($submission->text)) {
            'name' => 'grade',
            'id' => 'grade',
            'min' => 0,
-           'max' => $maxgrade,
-           'step' => '1',
-           'value' => $oldgrade,
+           'max' => format_float($maxgrade, $selfgrade->decimalpoints),
+           'step' => $selfgrade->decimalpoints ? 1 / ($selfgrade->decimalpoints * 10) : 1,
+           'value' => format_float($oldgrade, $selfgrade->decimalpoints),
            'class' => 'form-control',
            'style' => 'width: 100px;', // ограничим ширину поля, чтобы не растягивалось
            ]);
