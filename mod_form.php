@@ -24,11 +24,20 @@ class mod_selfgrade_mod_form extends moodleform_mod {
         'subdirs' => false,
         'maxfiles' => 0,
         'maxbytes' => 0,
-        'context' => $this->context,
+        'context' => isset($this->context) ? $this->context : context_system::instance(),
         ];
     }
 
     public function set_data($defaultvalues) {
+        $decimals = isset($defaultvalues->decimalpoints) ? (int)$defaultvalues->decimalpoints : 2;
+        if (isset($defaultvalues->grade)) {
+            $defaultvalues->grade = format_float((float)$defaultvalues->grade, $decimals);
+        }
+
+        if (isset($defaultvalues->gradepass)) {
+            $defaultvalues->gradepass = format_float((float)$defaultvalues->gradepass, $decimals);
+        }
+
         if (!empty($defaultvalues->content)) {
             $draftid = file_get_submitted_draft_itemid('content_editor');
             $defaultvalues->content_editor = [
@@ -45,6 +54,7 @@ class mod_selfgrade_mod_form extends moodleform_mod {
                 'itemid' => $draftid,
             ];
         }
+
         if (!empty($defaultvalues->answer)) {
             $draftid = file_get_submitted_draft_itemid('answer_editor');
             $defaultvalues->answer_editor = [
@@ -61,14 +71,8 @@ class mod_selfgrade_mod_form extends moodleform_mod {
                 'itemid' => $draftid,
             ];
         }
-        parent::set_data($defaultvalues);
-    }
 
-    public function data_preprocessing(&$toform) {
-        if (isset($toform['grade'])) {
-            // Convert to a real number, so we don't get 0.0000.
-            $toform['grade'] = $toform['grade'] + 0;
-        }
+        parent::set_data($defaultvalues);
     }
 
     public function definition() {
