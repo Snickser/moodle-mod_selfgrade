@@ -120,6 +120,8 @@ class mod_selfgrade_mod_form extends moodleform_mod {
         );
         $mform->addHelpButton('decimalpoints', 'decimalplaces', 'quiz');
 
+        $mform->addElement('advcheckbox', 'allowedit', get_string('allowedit', 'selfgrade'));
+
         $mform->addElement('advcheckbox', 'random', get_string('random', 'selfgrade'));
         $mform->addHelpButton('random', 'random', 'selfgrade');
 

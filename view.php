@@ -190,9 +190,22 @@ if (empty($submission->text)) {
 } else if ($submission->grade >= 0) {
     echo format_text("Ваш ответ", FORMAT_HTML);
 
-    echo html_writer::tag('div', format_text($oldtext, FORMAT_HTML), [
+    echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
+
+    if (!$selfgrade->allowedit) {
+        echo html_writer::tag('div', format_text($oldtext, FORMAT_HTML), [
             'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
             ]);
+    } else {
+        // textarea с классом form-control
+        echo html_writer::tag('textarea', s($oldtext), [
+        'name' => 'studenttext',
+        'id' => 'studenttext',
+        'rows' => 10,
+        'cols' => 80,
+        'class' => 'form-control',
+        ]);
+    }
 
     echo "<br>";
 
@@ -203,8 +216,6 @@ if (empty($submission->text)) {
             ]);
 
     echo html_writer::empty_tag('p');
-
-    echo html_writer::start_tag('form', ['method' => 'post', 'action' => 'submit.php']);
 
     echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
 

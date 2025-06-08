@@ -84,7 +84,11 @@ if (!empty($existing->text)) {
         );
     } else {
         $record->grade = $grade;
-        $record->text = $existing->text;
+        if (!$selfgrade->allowedit) {
+            $record->text = $existing->text;
+        } else {
+            $record->text = $studenttext;
+        }
     }
 }
 

@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 $string['answer'] = 'Right answer';
+$string['allowedit'] = 'Allow the student to change his answer';
 $string['content'] = 'Page content';
 $string['modulename'] = 'Self Grade';
 $string['modulenameplural'] = 'Self Grades';
