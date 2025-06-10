@@ -22,6 +22,7 @@ function selfgrade_supports($feature) {
         case FEATURE_MOD_INTRO:
         case FEATURE_SHOW_DESCRIPTION:
         case FEATURE_GRADE_HAS_GRADE:
+	case FEATURE_BACKUP_MOODLE2: 
             return true;
         default:
             return null;
@@ -136,5 +137,31 @@ function selfgrade_grade_item_update($selfgrade, $grades = null) {
         0,
         $grades,
         $params
+    );
+}
+
+function mod_selfgrade_core_calendar_provide_event_action(calendar_event $event,
+                                                      \core_calendar\action_factory $factory, $userid = 0) {
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['selfgrade'][$event->instance];
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/selfgrade/view.php', ['id' => $cm->id]),
+        1,
+        true
     );
 }
