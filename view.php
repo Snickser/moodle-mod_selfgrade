@@ -141,6 +141,8 @@ if (empty($submission->text)) {
         'style' => 'overflow:auto; padding:4px; border:1px dashed #999; background:#f0f0f0; font-size:0.9em;',
         'class' => 'mb-3',
         ]);
+
+        echo "<br>";
         echo get_string('answer', 'selfgrade');
 
         echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
@@ -208,7 +210,6 @@ if (empty($submission->text)) {
     }
 
     echo "<br>";
-
     echo get_string('answer', 'selfgrade');
 
     echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
@@ -262,7 +263,6 @@ if (empty($submission->text)) {
             ]);
 
     echo "<br>";
-
     echo get_string('answer', 'selfgrade');
 
     echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
