@@ -16,7 +16,9 @@
 
 $string['answer'] = 'Правильный ответ';
 $string['allowedit'] = 'Разрешить студенту изменить свой ответ';
+$string['areyousure'] = 'Отправить ответ?';
 $string['content'] = 'Содержимое страницы';
+$string['gradeanswer'] = 'Оцените свой ответ (максимальный балл {$a}):&nbsp;';
 $string['modulename'] = 'Самостоятельная оценка';
 $string['modulenameplural'] = 'Самостоятельные оценки';
 $string['pluginadministration'] = 'Администрирование плагина';

@@ -16,7 +16,9 @@
 
 $string['answer'] = 'Right answer';
 $string['allowedit'] = 'Allow the student to change his answer';
+$string['areyousure'] = 'Submit answer?';
 $string['content'] = 'Page content';
+$string['gradeanswer'] = 'Grade your answer (maximum score {$a}): ';
 $string['modulename'] = 'Self Grade';
 $string['modulenameplural'] = 'Self Grades';
 $string['pluginadministration'] = 'Plugin administration';

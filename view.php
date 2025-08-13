@@ -120,7 +120,7 @@ if (empty($submission->text)) {
     echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
     echo '<button type="submit" class="mt-2 btn btn-primary" data-modal="confirmation"
-        data-modal-title-str=\'["submit", "core"]\' data-modal-content-str=\'["areyousure"]\'
+        data-modal-title-str=\'["submit", "core"]\' data-modal-content-str=\'["areyousure", "selfgrade"]\'
         data-modal-yes-button-str=\'["confirm", "core"]\'">' . get_string('submit') . '</button>';
 
     echo html_writer::end_tag('form');
@@ -141,7 +141,7 @@ if (empty($submission->text)) {
         'style' => 'overflow:auto; padding:4px; border:1px dashed #999; background:#f0f0f0; font-size:0.9em;',
         'class' => 'mb-3',
         ]);
-        echo format_text("Правильный ответ", FORMAT_HTML);
+        echo get_string('answer', 'selfgrade');
 
         echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
@@ -153,7 +153,7 @@ if (empty($submission->text)) {
 
         echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
 
-        echo html_writer::tag('label', 'Оцените ответ (максимальный балл ' . format_float($maxgrade, $selfgrade->decimalpoints) . '):&nbsp;', [
+        echo html_writer::tag('label', get_string('gradeanswer', 'selfgrade', format_float($maxgrade, $selfgrade->decimalpoints)), [
         'for' => 'grade',
         'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
         ]);
@@ -209,7 +209,7 @@ if (empty($submission->text)) {
 
     echo "<br>";
 
-    echo format_text("Правильный ответ", FORMAT_HTML);
+    echo get_string('answer', 'selfgrade');
 
     echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
@@ -219,7 +219,7 @@ if (empty($submission->text)) {
 
     echo html_writer::start_tag('div', ['class' => 'd-flex align-items-center mb-3']);
 
-    echo html_writer::tag('label', 'Оцените ответ (максимальный балл ' . format_float($maxgrade, $selfgrade->decimalpoints) . '):&nbsp;', [
+    echo html_writer::tag('label', get_string('gradeanswer', 'selfgrade', format_float($maxgrade, $selfgrade->decimalpoints)), [
            'for' => 'grade',
            'class' => 'form-label mt-2 me-2', // me-2 = margin-end (правый отступ)
            ]);
@@ -263,7 +263,7 @@ if (empty($submission->text)) {
 
     echo "<br>";
 
-    echo format_text("Правильный ответ", FORMAT_HTML);
+    echo get_string('answer', 'selfgrade');
 
     echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
