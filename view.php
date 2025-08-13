@@ -209,8 +209,9 @@ if (empty($submission->text)) {
         ]);
     }
 
-    echo "<br>";
+    echo '<p class="mt-3 mb-0">';
     echo get_string('answer', 'selfgrade');
+    echo '</p>';
 
     echo html_writer::tag('div', format_text($answer, FORMAT_HTML, ['context' => $context, 'noclean' => true, 'filter' => true]), [
         'style' => 'overflow:auto; padding:4px; border:1px solid #ccc; background:#f9f9f9; font-size:0.9em;',
